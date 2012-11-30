@@ -18,9 +18,10 @@ Vagrant::Config.run do |config|
     chef.cookbooks_path = "cookbooks"
     chef.add_recipe "apt"
     chef.add_recipe "build-essential"
+    chef.add_recipe "python"
     chef.add_recipe "postgresql"
     chef.add_recipe "postgis"
-    #chef.log_level = :debug
+    chef.add_recipe "django"
   end
   
 end
