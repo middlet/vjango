@@ -12,7 +12,7 @@ bash "create_postgis_template" do
         POSTGIS_SQL_PATH="/usr/share/postgresql/9.1/contrib/postgis-1.5/"
         
         # creating the template spatial database
-        createdb -E UTF8 template_postgis
+        createdb template_postgis
         createlang -d template_postgis plpgsql
         
         # allow non superusers to create from this template
