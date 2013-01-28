@@ -1,19 +1,3 @@
-# install latest django
-#python_pip "django" do
-#    action :install
-#end
-# create the database for usage in the project
-#postgresql_database 'desurbsdb' do
-#  connection ({:host => "127.0.0.1", :port => 5432, :username => #'desurbs', :password => 'desurbs'})
-#  template "template_postgis"
-#  encoding "UTF8"
-#  action :create
-#end
-#execute "create-database" do
-#    user "postgres"
-#    command "createdb -U desurbs -O desurbs desurbsdb"
-#end
-
 # update the packages
 execute "update_package_index" do
     command "apt-get update"
@@ -58,6 +42,11 @@ execute "install_django" do
     command "pip install django"
 end
 
+# install python postgresql extensions
+execute "install_django" do
+    command "apt-get install -y python-psycopg2"
+end
+
 # set up the default db for django
 bash "create_database" do
     user "postgres"
@@ -66,3 +55,20 @@ bash "create_database" do
         psql -c "create database desurbsdb owner desurbs template template_postgis;"
     EOH
 end
+
+bash "postgres_config_file" do
+    code <<-EOH
+        cat > /etc/postgresql/9.1/main/pg_hba.conf << _EOF_
+local   all             postgres                                peer
+local   all             all                                     md5
+host    all             all             127.0.0.1/32            md5
+host    all             all             ::1/128                 md5
+_EOF_
+    EOH
+end
+
+# install south (database migrations)
+execute "install_South" do
+    command "pip install South"
+end
+
